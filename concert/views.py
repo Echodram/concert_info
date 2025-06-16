@@ -18,9 +18,9 @@ class PostInforamtionView(APIView):
         serializer = InformationSerializer(data = {
             "nom" : request.data.get("nom"),
             "telephone" : request.data.get("telephone"),
-            "recevoir" : request.data.get("recevoirInfo"),
+            "recevoir" : request.data.get("recevoir"),
         })
-        print(request.data.get("recevoirInfo"))
+        print(request.data.get("recevoir"))
         if serializer.is_valid():
             info = serializer.save()
             return Response({"id" : info.id },status=status.HTTP_201_CREATED)
