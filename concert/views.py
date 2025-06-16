@@ -43,11 +43,11 @@ def get_file(request):
         if objects.exists:
             for obj in objects:
                 information["id"].append(obj.id)
-                information["nom"].append(obj.nom)
+                information["Nom"].append(obj.nom)
                 if obj.recevoirInfo:
-                    information["recevoirInfo"].append("Oui")
+                    information["Recevoir les informations"].append("Oui")
                 else:
-                    information["recevoirInfo"].append("Non")
+                    information["Recevoir les informations"].append("Non")
                 information["telephone"].append(obj.telephone)
                 
             file_path = os.path.join(settings.MEDIA_ROOT, "subscriber_for_concert_molded.xlsx")
