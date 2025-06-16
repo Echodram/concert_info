@@ -42,7 +42,7 @@ def get_file(request):
         
         if objects.exists:
             for obj in objects:
-                information["id"].append(obj.nom)
+                information["id"].append(obj.id)
                 information["nom"].append(obj.nom)
                 if obj.recevoirInfo:
                     information["recevoirInfo"].append("Oui")
