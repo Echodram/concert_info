@@ -11,16 +11,22 @@ import os
 from django.conf import settings
 
 
+
+
 class PostInforamtionView(APIView):
     serializer_class = InformationSerializer
     queryset = Information.objects.all()
     def post(self, request):
+        nom = request.data.get("nom")
+        telephone= request.data.get("telephone")
+        recevoir = request.data.get("recevoir")
+        
         serializer = InformationSerializer(data = {
-            "nom" : request.data.get("nom"),
-            "telephone" : request.data.get("telephone"),
-            "recevoir" : request.data.get("recevoir"),
+            "nom" : nom,
+            "telephone" : telephone,
+            "recevoir" : recevoir,
         })
-        print(request.data.get("recevoir"))
+            
         if serializer.is_valid():
             info = serializer.save()
             return Response({"id" : info.id },status=status.HTTP_201_CREATED)
@@ -32,9 +38,9 @@ def get_file(request):
     if request.method == "GET":
         information = {
             "id" : [],
-            "nom" : [],
-            "telephone" :[],
-            "recevoirInfo" :[],
+            "Nom" : [],
+            "Telephone" :[],
+            "Recevoir les informations" :[],
         }
         try:
             objects = Information.objects.all()
@@ -49,7 +55,7 @@ def get_file(request):
                     information["Recevoir les informations"].append("Oui")
                 else:
                     information["Recevoir les informations"].append("Non")
-                information["telephone"].append(obj.telephone)
+                information["Telephone"].append(obj.telephone)
                 
             file_path = os.path.join(settings.MEDIA_ROOT, "subscriber_for_concert_molded.xlsx")
             df = pd.DataFrame(information)
@@ -60,8 +66,13 @@ def get_file(request):
                 response['Content-Disposition'] = f'attachment; filename="subscriber_for_concert_molded.xlsx'
                 return response
         else:
-            raise Http404("File does not exist") ##
-        
+            raise Http404("File does not exist")
+    
+
+
+
+
+     
         
                
         
