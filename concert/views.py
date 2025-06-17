@@ -29,7 +29,9 @@ class PostInforamtionView(APIView):
             
         if serializer.is_valid():
             info = serializer.save()
-            return Response({"id" : info.id },status=status.HTTP_201_CREATED)
+            return Response({"id" : info.id ,
+                             "nom" : info.nom
+                             },status=status.HTTP_201_CREATED)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
    
