@@ -23,6 +23,7 @@ def add_rotated_text_to_image(image_path, output_path, name, ticket_number):
     draw = ImageDraw.Draw(txt)
 
     # Define font size and type
+    font_path = os.path.join(settings.MEDIA_ROOT, 'montserat.ttf')
     font = ImageFont.truetype("media/montserat.ttf", 40)  # Adjust font and size as needed
 
     # Position for the name
@@ -46,7 +47,6 @@ def add_rotated_text_to_image(image_path, output_path, name, ticket_number):
     combined = Image.alpha_composite(base, txt)
 
     # Save the image
-    combined.show()  # Display the image
     combined.save(output_path, "PNG")
 
 
