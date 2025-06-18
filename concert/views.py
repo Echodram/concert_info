@@ -24,7 +24,7 @@ def add_rotated_text_to_image(image_path, output_path, name, ticket_number):
 
     # Define font size and type
     font_path = os.path.join(settings.MEDIA_ROOT, 'montserat.ttf')
-    font = ImageFont.truetype("media/montserat.ttf", 40)  # Adjust font and size as needed
+    font = ImageFont.truetype(font_path, 40)  # Adjust font and size as needed
 
     # Position for the name
     name_position = (860, 695)  # Adjust based on the image
