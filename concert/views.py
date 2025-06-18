@@ -9,14 +9,53 @@ import logging
 from django.http import FileResponse, Http404
 import os
 from django.conf import settings
+from PIL import Image, ImageDraw, ImageFont
 
 
+def add_rotated_text_to_image(image_path, output_path, name, ticket_number):
+    # Open the original image
+    base = Image.open(image_path).convert('RGBA')
+
+    # Create a new blank image with the same size as the original
+    txt = Image.new('RGBA', base.size, (255, 255, 255, 0))
+
+    # Initialize ImageDraw
+    draw = ImageDraw.Draw(txt)
+
+    # Define font size and type
+    font = ImageFont.truetype("media/montserat.ttf", 40)  # Adjust font and size as needed
+
+    # Position for the name
+    name_position = (860, 695)  # Adjust based on the image
+    # Create a rotated text image for the name
+    name_image = Image.new('RGBA', (300, 300), (255, 255, 255, 0))
+    name_draw = ImageDraw.Draw(name_image)
+    name_draw.text((0, 0), name, fill="white", font=font)
+    txt.paste(name_image, name_position, name_image)
+
+    # Position for the ticket number
+    ticket_position = (220, -5)  # Adjust based on the image
+    # Create a rotated text image for the ticket number
+    ticket_image = Image.new('RGBA', (300, 300), (255, 255, 255, 0))
+    ticket_draw = ImageDraw.Draw(ticket_image)
+    ticket_draw.text((0, 0), ticket_number, fill="black", font=font)
+    ticket_image = ticket_image.rotate(90, expand=1)
+    txt.paste(ticket_image, ticket_position, ticket_image)
+
+    # Combine the original image with the text
+    combined = Image.alpha_composite(base, txt)
+
+    # Save the image
+    combined.show()  # Display the image
+    combined.save(output_path, "PNG")
 
 
 class PostInforamtionView(APIView):
     serializer_class = InformationSerializer
     queryset = Information.objects.all()
     def post(self, request):
+        host_uri = request.get_host()
+        file_path = os.path.join(settings.MEDIA_ROOT, "invitation.png")
         nom = request.data.get("nom")
         telephone= request.data.get("telephone")
         recevoir = request.data.get("recevoir")
@@ -24,14 +63,25 @@ class PostInforamtionView(APIView):
         serializer = InformationSerializer(data = {
             "nom" : nom,
             "telephone" : telephone,
-            "recevoirInfo" : recevoir,
+            "recevoir" : recevoir,
         })
-            
+        
         if serializer.is_valid():
             info = serializer.save()
+            download_path = os.path.join(settings.MEDIA_ROOT, f'invitation_{info.id}.png')
+        
+            if info.id <10:
+                id = '0'+str(info.id)
+                add_rotated_text_to_image(file_path, download_path, nom, id)
+            else:
+                add_rotated_text_to_image(file_path, download_path, nom, info.id)
+                pass
+            download_path = os.path.join(settings.MEDIA_ROOT, f'invitation_{id}.png')
             return Response({"id" : info.id ,
-                             "nom" : info.nom
+                             "nom" : info.nom,
+                             'download_link': f'{host_uri}/invitation/{info.id}'
                              },status=status.HTTP_201_CREATED)
+            
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
    
@@ -69,6 +119,21 @@ def get_file(request):
                 return response
         else:
             raise Http404("File does not exist")
+
+def download_file(request, id):
+    file_path = os.path.join(settings.MEDIA_ROOT, f'invitation_{id}.png')
+    
+    if os.path.exists(file_path):
+        response = FileResponse(open(file_path, 'rb'))
+        response['Content-Disposition'] = f'attachment; filename= invitation_{id}.png'
+        return response
+    else:
+        raise Http404("File does not exist")
+        
+    
+
+
+    
     
 
 

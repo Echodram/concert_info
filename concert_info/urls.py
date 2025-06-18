@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from concert.views import PostInforamtionView, get_file
+from concert.views import PostInforamtionView, get_file, download_file
 
 from rest_framework.documentation import include_docs_urls
 
@@ -28,4 +28,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', PostInforamtionView.as_view()),
     path('download/', get_file),
+    path('invitation/<int:id>', download_file)
 ]
