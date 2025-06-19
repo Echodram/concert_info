@@ -83,7 +83,7 @@ class PostInforamtionView(APIView):
             image_url = f"{request.scheme}://{request.get_host()}{settings.MEDIA_URL}{download_path}"
             return Response({"id" : info.id ,
                              "nom" : info.nom,
-                             "image_path": f"{image_url}",
+                             'download_link': f'{host_uri}/invitation/{info.id}'
                              },status=status.HTTP_201_CREATED)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
