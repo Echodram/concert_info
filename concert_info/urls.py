@@ -28,5 +28,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', PostInforamtionView.as_view()),
     path('download/', get_file),
-    path('invitation/<int:id>', download_file)
+    path('invitation/<int:id>', download_file),
 ]

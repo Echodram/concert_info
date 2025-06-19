@@ -7,10 +7,13 @@ from .models import Information
 import pandas as pd
 import logging
 from django.http import FileResponse, Http404
+from django.shortcuts import render, HttpResponse
 import os
 from django.conf import settings
 from PIL import Image, ImageDraw, ImageFont
 
+
+ 
 
 def add_rotated_text_to_image(image_path, output_path, name, ticket_number):
     # Open the original image
@@ -39,7 +42,7 @@ def add_rotated_text_to_image(image_path, output_path, name, ticket_number):
     # Create a rotated text image for the ticket number
     ticket_image = Image.new('RGBA', (300, 300), (255, 255, 255, 0))
     ticket_draw = ImageDraw.Draw(ticket_image)
-    ticket_draw.text((0, 0), ticket_number, fill="black", font=font)
+    ticket_draw.text((0, 0), str(ticket_number), fill="black", font=font)
     ticket_image = ticket_image.rotate(90, expand=1)
     txt.paste(ticket_image, ticket_position, ticket_image)
 
@@ -69,19 +72,19 @@ class PostInforamtionView(APIView):
         if serializer.is_valid():
             info = serializer.save()
             download_path = os.path.join(settings.MEDIA_ROOT, f'invitation_{info.id}.png')
-        
             if info.id <10:
-                id = '0'+str(info.id)
+                id = '0' + str(info.id)
                 add_rotated_text_to_image(file_path, download_path, nom, id)
             else:
                 add_rotated_text_to_image(file_path, download_path, nom, info.id)
                 pass
-            download_path = os.path.join(settings.MEDIA_ROOT, f'invitation_{id}.png')
+            download_path = os.path.join(settings.MEDIA_ROOT, f'invitation_{info.id}.png')
+            
+            image_url = f"{request.scheme}://{request.get_host()}{settings.MEDIA_URL}{download_path}"
             return Response({"id" : info.id ,
                              "nom" : info.nom,
-                             'download_link': f'{host_uri}/invitation/{info.id}'
+                             "image_path": f"{image_url}",
                              },status=status.HTTP_201_CREATED)
-            
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
    
@@ -122,7 +125,6 @@ def get_file(request):
 
 def download_file(request, id):
     file_path = os.path.join(settings.MEDIA_ROOT, f'invitation_{id}.png')
-    
     if os.path.exists(file_path):
         response = FileResponse(open(file_path, 'rb'))
         response['Content-Disposition'] = f'attachment; filename= invitation_{id}.png'
