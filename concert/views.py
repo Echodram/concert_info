@@ -15,6 +15,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 def add_rotated_text_to_image(image_path, output_path, name, ticket_number):
+    path = os.path.join(settings.MEDIA_ROOT, f'invitation_sent')
     # Open the original image
     base = Image.open(image_path).convert('RGBA')
 
@@ -51,7 +52,10 @@ def add_rotated_text_to_image(image_path, output_path, name, ticket_number):
     scale = 0.5  # Start with 50% size reduction
     img_resized = combined.resize((int(width * scale), int(height * scale)), Image.LANCZOS)
     img_palette = img_resized.convert("P", palette=Image.ADAPTIVE, colors=256)
-    
+   
+    if len(os.listdir(path)) >= 100:
+        for file in os.listdir(path):
+            os.remove(os.path.join(path, file))
     img_palette.save(output_path, format='PNG', optimize=True)
 
    
