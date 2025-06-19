@@ -78,7 +78,6 @@ class PostInforamtionView(APIView):
         nom = request.data.get("nom")
         telephone= request.data.get("telephone")
         recevoir = request.data.get("recevoir")
-        
         serializer = InformationSerializer(data = {
             "nom" : nom,
             "telephone" : telephone,
@@ -118,8 +117,8 @@ def get_file(request):
             for obj in objects:
                 information["id"].append(obj.id)
                 information["Nom"].append(obj.nom)
-                print(obj.recevoirInfo)
-                if obj.recevoirInfo == True:
+                print(obj.recevoir)
+                if obj.recevoir == True:
                     information["Recevoir les informations"].append("Oui")
                 else:
                     information["Recevoir les informations"].append("Non")
