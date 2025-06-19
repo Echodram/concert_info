@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-^%r5*i1be_62hr5-lfs&e8qvttmyrri3^nfd^g$u@m^cj-3&=)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["moldedinchrist.pythonanywhere.com/"]
+ALLOWED_HOSTS = ["moldedinchrist.pythonanywhere.com"]
 
 CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
