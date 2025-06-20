@@ -18,7 +18,7 @@ def add_rotated_text_to_image(image_path, output_path, name, ticket_number):
     path = os.path.join(settings.MEDIA_ROOT, f'invitation_sent')
     # Open the original image
     base = Image.open(image_path).convert('RGBA')
-
+    
     # Create a new blank image with the same size as the original
     txt = Image.new('RGBA', base.size, (255, 255, 255, 0))
 
@@ -26,11 +26,11 @@ def add_rotated_text_to_image(image_path, output_path, name, ticket_number):
     draw = ImageDraw.Draw(txt)
 
     # Define font size and type
-    font_path = os.path.join(settings.MEDIA_ROOT, 'montserat.ttf')
-    font = ImageFont.truetype(font_path, 40)  # Adjust font and size as needed
+    font_path = os.path.join(settings.MEDIA_ROOT, 'archivoblack.ttf')
+    font = ImageFont.truetype(font_path, 50)  # Adjust font and size as needed
 
     # Position for the name
-    name_position = (860, 695)  # Adjust based on the image
+    name_position = (860, 688)  # Adjust based on the image
     # Create a rotated text image for the name
     name_image = Image.new('RGBA', (300, 300), (255, 255, 255, 0))
     name_draw = ImageDraw.Draw(name_image)
@@ -38,11 +38,13 @@ def add_rotated_text_to_image(image_path, output_path, name, ticket_number):
     txt.paste(name_image, name_position, name_image)
 
     # Position for the ticket number
-    ticket_position = (220, -5)  # Adjust based on the image
+    
+    #ticket_position = (220, -5)  # Adjust based on the image
     # Create a rotated text image for the ticket number
+    ticket_position = (218, -5)  
     ticket_image = Image.new('RGBA', (300, 300), (255, 255, 255, 0))
     ticket_draw = ImageDraw.Draw(ticket_image)
-    ticket_draw.text((0, 0), str(ticket_number), fill="black", font=font)
+    ticket_draw.text((0, 0), str(ticket_number), fill="#A4111A", font=font)
     ticket_image = ticket_image.rotate(90, expand=1)
     txt.paste(ticket_image, ticket_position, ticket_image)
 
@@ -56,17 +58,9 @@ def add_rotated_text_to_image(image_path, output_path, name, ticket_number):
     if len(os.listdir(path)) >= 100:
         for file in os.listdir(path):
             os.remove(os.path.join(path, file))
+
     img_palette.save(output_path, format='PNG', optimize=True)
 
-   
-def compress_image(input_path, output_path, quality=85):
-    with Image.open(input_path) as img:
-        if img.format == 'JPEG':
-            img.save(output_path, 'JPEG', quality=quality, optimize=True)
-        elif img.format == 'PNG':
-            img.save(output_path, 'PNG', optimize=True)
-        else:
-            img.save(output_path)
 
 
 class PostInforamtionView(APIView):
